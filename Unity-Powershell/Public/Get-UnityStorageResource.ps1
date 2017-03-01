@@ -53,9 +53,10 @@ Function Get-UnitystorageResource {
     $TypeName = 'UnitystorageResource'
 
     Switch ($Session.apiVersion) {
-      '4.0' {$Exception = 'compressionStatus','compressionSizeSaved','compressionPercent','compressionRatio'}
+      '4.0' {$Exception = 'compressionStatus','compressionSizeSaved','compressionPercent','compressionRatio'; break}
+      {[System.Version]'5.0'} {$Exception = Write-Output relocationPolicy tieringPolicy; break}
       'Default' {$Exception = ''}
-    }  
+    }
 
     Switch ($Type) {
       'lun' {$Filter = 'type eq 8'}
@@ -64,7 +65,7 @@ Function Get-UnitystorageResource {
     }
   }
 
-  Process { 
+  Process {
     Foreach ($sess in $session) {
 
       Write-Verbose "Processing Session: $($sess.Server) with SessionId: $($sess.SessionId)"
@@ -86,7 +87,7 @@ Function Get-UnitystorageResource {
         If ($Results) {
 
           $ResultsFiltered = @()
-          
+
           # Results filtering
           Switch ($PsCmdlet.ParameterSetName) {
             'ByName' {
@@ -98,7 +99,7 @@ Function Get-UnitystorageResource {
           }
 
           If ($ResultsFiltered) {
-            
+
             $ResultCollection = ConvertTo-Hashtable -Data $ResultsFiltered
 
             Foreach ($Result in $ResultCollection) {
@@ -112,9 +113,9 @@ Function Get-UnitystorageResource {
               # Output results
               $Object
             } # End Foreach ($Result in $ResultCollection)
-          } # End If ($ResultsFiltered) 
+          } # End If ($ResultsFiltered)
         } # End If ($Results)
-      } # End If ($Sess.TestConnection()) 
+      } # End If ($Sess.TestConnection())
     } # End Foreach ($sess in $session)
   } # End Process
 } # End Function

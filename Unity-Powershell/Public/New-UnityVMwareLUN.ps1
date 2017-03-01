@@ -30,9 +30,9 @@ Function New-UnityVMwareLUN {
       List of host to grant access to LUN.
       .PARAMETER accessMask
       Host access mask. Might be:
-      - NoAccess: No access. 
-      - Production: Access to production LUNs only. 
-      - Snapshot: Access to LUN snapshots only. 
+      - NoAccess: No access.
+      - Production: Access to production LUNs only.
+      - Snapshot: Access to LUN snapshots only.
       - Both: Access to both production LUNs and their snapshots.
       .PARAMETER snapSchedule
       Snapshot schedule assigned to the storage resource
@@ -71,7 +71,7 @@ Function New-UnityVMwareLUN {
     [Parameter(Mandatory = $false,HelpMessage = 'FAST VP settings for the storage resource')]
     [TieringPolicyEnum]$fastVPParameters,
     [Parameter(Mandatory = $false,HelpMessage = 'Indicates whether to enable inline compression for the LUN. Default is True')]
-    [bool]$isCompressionEnabled,
+    [bool]$isCompressionEnabled = $true,
 
     # snapScheduleParameters
     [Parameter(Mandatory = $false,HelpMessage = 'ID of a protection schedule to apply to the storage resource')]
@@ -123,12 +123,12 @@ Function New-UnityVMwareLUN {
           $lunParameters["fastVPParameters"] = $fastVPParam
         }
 
-        If ($PSBoundParameters.ContainsKey('isCompressionEnabled')) {
+        # If ($PSBoundParameters.ContainsKey('isCompressionEnabled')) {
           $lunParameters["isCompressionEnabled"] = $isCompressionEnabled
-        }
+        # }
 
         If ($PSBoundParameters.ContainsKey('host')) {
-        
+
           $lunParameters["hostAccess"] = @()
           $hostAccess = @()
 
@@ -143,7 +143,7 @@ Function New-UnityVMwareLUN {
           }
 
           $lunParameters["hostAccess"] = $hostAccess
-    
+
         }
 
         $body["lunParameters"] = $lunParameters
@@ -168,7 +168,7 @@ Function New-UnityVMwareLUN {
 
         #Show $body in verbose message
         $Json = $body | ConvertTo-Json -Depth 10
-        Write-Verbose $Json  
+        Write-Verbose $Json
 
         If ($Sess.TestConnection()) {
 
@@ -194,7 +194,7 @@ Function New-UnityVMwareLUN {
 
             Get-UnityVMwareLUN -Session $Sess -ID $Storageresource.luns.id
           } # End If ($request.StatusCode -eq $StatusCode)
-        } # End If ($Sess.TestConnection()) 
+        } # End If ($Sess.TestConnection())
       } # End Foreach
     } # End Foreach ($sess in $session)
   } # End Process

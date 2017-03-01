@@ -43,6 +43,11 @@ Function Get-UnityFilesystem {
     $ResultCollection = @()
     $URI = '/api/types/filesystem/instances' #URI
     $TypeName = 'UnityFilesystem'
+
+    $Exception = Switch ($Session.apiVersion) {
+      {[System.Version]'5.0'} {Write-Output tieringPolicy; break}
+      'Default' {''}
+    }
   }
 
   Process {
@@ -53,7 +58,7 @@ Function Get-UnityFilesystem {
       If ($Sess.TestConnection()) {
 
         #Building the URL from Object Type.
-        $URL = Get-URLFromObjectType -Server $sess.Server -URI $URI -TypeName $TypeName -Compact
+        $URL = Get-URLFromObjectType -Server $sess.Server -URI $URI -TypeName $TypeName -Exception $Exception -Compact
 
         Write-Verbose "URL: $URL"
 
@@ -67,7 +72,7 @@ Function Get-UnityFilesystem {
         If ($Results) {
 
           $ResultsFiltered = @()
-          
+
           # Results filtering
           Switch ($PsCmdlet.ParameterSetName) {
             'ByName' {
@@ -79,7 +84,7 @@ Function Get-UnityFilesystem {
           }
 
           If ($ResultsFiltered) {
-            
+
             $ResultCollection = ConvertTo-Hashtable -Data $ResultsFiltered
 
             Foreach ($Result in $ResultCollection) {
@@ -90,9 +95,9 @@ Function Get-UnityFilesystem {
               # Output results
               $Object
             } # End Foreach ($Result in $ResultCollection)
-          } # End If ($ResultsFiltered) 
+          } # End If ($ResultsFiltered)
         } # End If ($Results)
-      } # End If ($Sess.TestConnection()) 
+      } # End If ($Sess.TestConnection())
     } # End Foreach ($sess in $session)
   } # End Process
 } # End Function

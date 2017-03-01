@@ -40,6 +40,11 @@ Function Get-UnityFastCache {
     $ResultCollection = @()
     $URI = '/api/types/fastCache/instances' #URI
     $TypeName = 'UnityFastCache'
+
+    $Exception = Switch ($Session.apiVersion) {
+      {[System.Version]'5.0'} {Write-Output sizeFree sizeTotal raidLevel health numberOfDisks; Throw "FastCache item not supported in Unity REST API v5.0"; break}
+      'Default' {''}
+    }
   }
 
   Process {
@@ -55,7 +60,7 @@ Function Get-UnityFastCache {
         If ($Sess.TestConnection()) {
 
           #Building the URL from Object Type.
-          $URL = Get-URLFromObjectType -Server $sess.Server -URI $URI -TypeName $TypeName -Compact
+          $URL = Get-URLFromObjectType -Server $sess.Server -URI $URI -TypeName $TypeName -Exception $Exception -Compact
 
           Write-Verbose "URL: $URL"
 
@@ -69,7 +74,7 @@ Function Get-UnityFastCache {
           If ($Results) {
 
             $ResultsFiltered = @()
-            
+
             # Results filtering
             Switch ($PsCmdlet.ParameterSetName) {
               'ByID' {
@@ -78,7 +83,7 @@ Function Get-UnityFastCache {
             }
 
             If ($ResultsFiltered) {
-              
+
               $ResultCollection = ConvertTo-Hashtable -Data $ResultsFiltered
 
               Foreach ($Result in $ResultCollection) {
@@ -89,9 +94,9 @@ Function Get-UnityFastCache {
                 # Output results
                 $Object
               } # End Foreach ($Result in $ResultCollection)
-            } # End If ($ResultsFiltered) 
+            } # End If ($ResultsFiltered)
           } # End If ($Results)
-        } # End If ($Sess.TestConnection()) 
+        } # End If ($Sess.TestConnection())
       } #End If ($Sess.isUnityVSA())
     } # End Foreach ($sess in $session)
   } # End Process

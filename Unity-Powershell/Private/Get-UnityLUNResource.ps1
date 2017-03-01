@@ -39,9 +39,10 @@ Function Get-UnityLUNResource {
     $TypeName = 'UnityLUN'
 
     Switch ($Session.apiVersion) {
-      '4.0' {$Exception = 'compressionSizeSaved','compressionPercent','compressionRatio','isCompressionEnabled'}
+      '4.0' {$Exception = 'compressionSizeSaved','compressionPercent','compressionRatio','isCompressionEnabled'; break}
+      {[System.Version]'5.0'} {$Exception = Write-Output relocationPolicy tieringPolicy; break}
       'Default' {$Exception = ''}
-    }  
+    }
   }
 
   Process {
@@ -73,7 +74,7 @@ Function Get-UnityLUNResource {
         }
 
         If ($ResultsFiltered) {
-          
+
           $ResultCollection = ConvertTo-Hashtable -Data $ResultsFiltered
 
           Foreach ($Result in $ResultCollection) {

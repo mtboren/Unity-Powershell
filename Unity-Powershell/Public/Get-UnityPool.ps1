@@ -46,8 +46,9 @@ Function Get-UnityPool {
 
     Switch ($Session.apiVersion) {
       '4.0' {$Exception = 'compressionSizeSaved','compressionPercent','compressionRatio','hasCompressionEnabledLuns'}
+      {[System.Version]'5.0'} {$Exception = Write-Output rebalanceProgress poolFastVP; break}
       'Default' {$Exception = ''}
-    }   
+    }
   }
 
   Process {
@@ -84,7 +85,7 @@ Function Get-UnityPool {
           }
 
           If ($ResultsFiltered) {
-            
+
             $ResultCollection = ConvertTo-Hashtable -Data $ResultsFiltered
 
             Foreach ($Result in $ResultCollection) {
@@ -95,9 +96,9 @@ Function Get-UnityPool {
               # Output results
               $Object
             } # End Foreach ($Result in $ResultCollection)
-          } # End If ($ResultsFiltered) 
+          } # End If ($ResultsFiltered)
         } # End If ($Results)
-      } # End If ($Sess.TestConnection()) 
+      } # End If ($Sess.TestConnection())
     } # End Foreach ($sess in $session)
   } # End Process
 } # End Function
