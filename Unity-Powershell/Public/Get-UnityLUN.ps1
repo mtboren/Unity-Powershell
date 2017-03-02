@@ -47,13 +47,7 @@ Function Get-UnityLUN {
       Write-Verbose "Processing Session: $($sess.Server) with SessionId: $($sess.SessionId)"
 
       If ($Sess.TestConnection()) {
-
-        # $StorageResource = Get-UnityStorageResource -Session $Sess -Type 'lun'
-
-        # If ($StorageResource) {
-          # $ResultCollection += Get-UnityLUNResource -Session $Sess -ID $StorageResource.luns.id
           $ResultCollection += Get-UnityLUNResource -Session $Sess
-        # }
       } else {
         Write-Host "You are no longer connected to EMC Unity array: $($Sess.Server)"
       }
